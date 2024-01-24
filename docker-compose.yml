@@ -13,17 +13,20 @@ services:
       context: ./services/php7.2-apache
 
   php8.3-apache:
-    image: php:8.3-apache
     container_name: php8.3-apache
     restart: always
     ports:
       - 8081:80
     volumes:
       - ./sites:/var/www/html
-      - ./service/php8.3-apache/sites-available:/etc/apache2/sites-available
     networks:
       network:
         ipv4_address: 10.5.0.6
+    build:
+      args:
+        - user=farid
+        - uid=1000
+      context: ./services/php8.3-apache
 
 networks:
   network:
