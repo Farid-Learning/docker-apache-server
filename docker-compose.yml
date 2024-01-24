@@ -7,10 +7,12 @@ services:
     volumes:
       - ./sites:/var/www/html
     networks:
-      network:
+      server-network:
         ipv4_address: 10.5.0.5
     build:
       context: ./services/php7.2-apache
+    depends_on:
+      - mysql
 
   php8.3-apache:
     container_name: php8.3-apache
@@ -20,16 +22,43 @@ services:
     volumes:
       - ./sites:/var/www/html
     networks:
-      network:
+      server-network:
         ipv4_address: 10.5.0.6
     build:
       args:
         - user=farid
         - uid=1000
       context: ./services/php8.3-apache
+    depends_on:
+      - mysql
+
+    mysql:
+      image: mysql:latest
+      command: --default-authentication-plugin=mysql_native_password
+      restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: mydatabase
+        MYSQL_USER: user
+        MYSQL_PASSWORD: password
+      ports:
+        - 3307:3306
+      volumes:
+        - ./mysql:/var/lib/mysql
+      networks:
+        - server-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8083:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: user
+      PMA_PASSWORD: password
 
 networks:
-  network:
+  server-network:
     driver: bridge
     ipam:
       config:
