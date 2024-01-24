@@ -10,7 +10,7 @@ services:
       network:
         ipv4_address: 10.5.0.5
     build:
-      context: ./apache/php7.2
+      context: ./services/php7.2-apache
 
   php8.3-apache:
     image: php:8.3-apache
@@ -20,7 +20,7 @@ services:
       - 8081:80
     volumes:
       - ./sites:/var/www/html
-      - ./apache/php8.3:/etc/apache2/sites-available
+      - ./service/php8.3-apache/sites-available:/etc/apache2/sites-available
     networks:
       network:
         ipv4_address: 10.5.0.6
