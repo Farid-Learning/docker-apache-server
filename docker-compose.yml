@@ -26,36 +26,36 @@ services:
         ipv4_address: 10.5.0.6
     build:
       args:
-        - user=farid
+        - user=default
         - uid=1000
       context: ./services/php8.3-apache
     depends_on:
       - mysql
 
   mysql:
-    image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
+    image: mysql:5.7
     restart: always
+    container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: test123
+      MYSQL_DATABASE: database
     ports:
       - 3307:3306
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./services/mysql:/var/lib/mysql
     networks:
       - server-network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
     ports:
-      - "8083:80"
+      - 8083:80
     environment:
       PMA_HOST: mysql
-      PMA_USER: user
-      PMA_PASSWORD: password
+      PMA_PORT: 3306
+    networks:
+      - server-network
 
 networks:
   server-network:
@@ -63,4 +63,3 @@ networks:
     ipam:
       config:
         - subnet: 10.5.0.0/16
-          gateway: 10.5.0.1
